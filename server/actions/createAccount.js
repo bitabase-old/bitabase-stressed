@@ -1,12 +1,10 @@
 const axios = require('axios');
 
-function createAccount (chance) {
+function createAccount (state, chance) {
   const record = {
     email: chance.email(),
     password: 'Password@11111'
   };
-
-  console.log('Creating account:', JSON.stringify(record));
 
   return axios({
     url: 'http://localhost:8001/v1/users',

@@ -1,4 +1,5 @@
 const http = require('http');
+const rqlite = require('rqlite-fp');
 
 const WebSocket = require('ws');
 const Chance = require('chance');
@@ -7,23 +8,64 @@ const finalStream = require('final-stream');
 const chance = new Chance();
 
 const createAccount = require('./actions/createAccount');
+const createSession = require('./actions/createSession');
+const createDatabase = require('./actions/createDatabase');
+const createCollection = require('./actions/createCollection');
+const createRecord = require('./actions/createRecord');
 
 const state = {
+  connection: null,
+
   actions: [{
+    method: createAccount,
     type: 'account:create',
     runs: [],
     runTimes: {},
-    runsInBatch: 1,
+    runsInBatch: 0,
     success: 0,
     failed: 0,
     lastError: null,
     lastSuccess: null,
     lastRecord: null
   }, {
+    method: createSession,
+    type: 'session:create',
+    runs: [],
+    runTimes: {},
+    runsInBatch: 0,
+    success: 0,
+    failed: 0,
+    lastError: null,
+    lastSuccess: null,
+    lastRecord: null
+  }, {
+    method: createDatabase,
     type: 'database:create',
     runs: [],
     runTimes: {},
-    runsInBatch: 1,
+    runsInBatch: 0,
+    success: 0,
+    failed: 0,
+    lastError: null,
+    lastSuccess: null,
+    lastRecord: null
+  }, {
+    method: createCollection,
+    type: 'collection:create',
+    runs: [],
+    runTimes: {},
+    runsInBatch: 0,
+    success: 0,
+    failed: 0,
+    lastError: null,
+    lastSuccess: null,
+    lastRecord: null
+  }, {
+    method: createRecord,
+    type: 'record:create',
+    runs: [],
+    runTimes: {},
+    runsInBatch: 0,
     success: 0,
     failed: 0,
     lastError: null,
@@ -31,6 +73,14 @@ const state = {
     lastRecord: null
   }]
 };
+
+rqlite.connect('http://localhost:4001', function (error, connection) {
+  if (error) {
+    throw error;
+  }
+
+  state.connection = connection;
+});
 
 const server = http.createServer(function (request, response) {
   if (request.method === 'get') {
@@ -59,9 +109,13 @@ const wss = new WebSocket.Server({ server });
 
 const startTime = Date.now();
 setInterval(() => {
+  if (!state.connection) {
+    return console.log('no connection yet');
+  }
+
   state.actions.forEach(action => {
     for (let i = 0; i < action.runsInBatch; i++) {
-      const promise = createAccount(chance)
+      const promise = action.method(state, chance)
         .then(result => {
           action.runs.splice(action.runs.indexOf(promise), 1);
           const secondGroup = parseInt((Date.now() - startTime) / 1000);
@@ -106,11 +160,11 @@ wss.on('connection', function connection (ws) {
         lastRecord: action.lastRecord
       }))
     }));
-
-    ws.on('close', function () {
-      clearTimeout(timer);
-    });
   }, 60);
+
+  ws.on('close', function () {
+    clearTimeout(timer);
+  });
 });
 
 server.listen(3001);

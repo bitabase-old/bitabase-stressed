@@ -1,3 +1,7 @@
+* {
+  box-sizing: border-box;
+}
+
 body {
   font-family: tahoma;
 }
@@ -25,5 +29,9 @@ th, td {
 }
 
 td:first-child {
+  width: 100%;
+}
+
+input {
   width: 100%;
 }
