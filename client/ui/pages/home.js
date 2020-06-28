@@ -1,5 +1,24 @@
 const menu = require('../components/menu');
 
+function createInput (html, value, onChange) {
+  function create (el) {
+    el.dom.addEventListener('input', function () {
+      onChange(el.dom.value);
+    });
+    el.dom.value = value;
+  }
+
+  function update (el) {
+    if (document.activeElement !== el.dom) {
+      el.dom.value = value;
+    }
+  }
+
+  return html`
+    <input oncreate=${create} onupdate=${update} />
+  `;
+}
+
 function getAverages (object) {
   const values = Object.values(object);
   const sum = values.reduce((a, b) => a + b, 0);
@@ -13,7 +32,7 @@ module.exports = function (app, html) {
   }
 
   return html`
-    <main >
+    <main>
       ${menu(app, html)}
       
       <section>
@@ -21,6 +40,7 @@ module.exports = function (app, html) {
         <table>
           <thead>
             <th>Name</th>
+            <th>Runs in Batch</th>
             <th>Active Runs</th>
             <th>Per Second</th>
             <th>Successes</th>
@@ -31,6 +51,7 @@ module.exports = function (app, html) {
           ${app.state.stats.actions.map(action => html`
             <tr>
               <td>${action.type}</td>
+              <td>${createInput(html, action.runsInBatch, newValue => app.changeRunsInBatch(action, newValue))}</td>
               <td>${action.activeRuns}</td>
               <td>${getAverages(action.runTimes)}</td>
               <td>${action.success}</td>

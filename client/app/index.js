@@ -39,11 +39,21 @@ module.exports = function (config) {
     eventEmitter.emit('stateChanged');
   }
 
+  function changeRunsInBatch (action, newValue) {
+    window.fetch(`/api/actions/${action.type}`, {
+      method: 'PATCH',
+      body: JSON.stringify({
+        runsInBatch: newValue
+      })
+    });
+  }
+
   return {
     state,
     emitStateChanged,
 
     changeUrl,
+    changeRunsInBatch,
 
     on: eventEmitter.addListener.bind(eventEmitter),
     off: eventEmitter.removeListener.bind(eventEmitter)
