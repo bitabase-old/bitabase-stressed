@@ -1,0 +1,29 @@
+body {
+  font-family: tahoma;
+}
+
+nav a {
+  margin-right: 5px;
+}
+
+table {
+  border-collapse: collapse;
+}
+
+th {
+  text-align: left;
+  text-align: left;
+  background-color: #551b8b;
+  color: white;
+  font-weight: 100;
+}
+
+th, td {
+  border: 3px solid #551b8b;
+  padding: 5px;
+  white-space: nowrap;
+}
+
+td:first-child {
+  width: 100%;
+}
