@@ -1,3 +1,5 @@
+require('http').globalAgent.maxSockets = 25;
+
 const http = require('http');
 const rqlite = require('rqlite-fp');
 
@@ -114,16 +116,22 @@ setInterval(() => {
   }
 
   state.actions.forEach(action => {
-    for (let i = 0; i < action.runsInBatch; i++) {
+    const activeRuns = action.runs.length;
+
+    for (let i = 0; i < action.runsInBatch - activeRuns; i++) {
       const promise = action.method(state, chance)
         .then(result => {
           action.runs.splice(action.runs.indexOf(promise), 1);
           const secondGroup = parseInt((Date.now() - startTime) / 1000);
           action.runTimes[secondGroup] = action.runTimes[secondGroup] ? action.runTimes[secondGroup] + 1 : 1;
 
+          Object.keys(action.runTimes).slice(0, -10).forEach(key => {
+            delete action.runTimes[key];
+          });
+
           if (result.error) {
             action.failed = action.failed + 1;
-            action.lastError = result.error.message;
+            action.lastError = result.error.toString();
             action.lastRecord = result.record;
             return;
           }
