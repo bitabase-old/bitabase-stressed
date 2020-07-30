@@ -15,26 +15,22 @@
   "license": "ISC",
   "dependencies": {
     "axios": "^0.19.2",
-    "browserify": "^16.5.1",
     "chance": "^1.1.6",
     "final-stream": "^1.1.0",
-    "local-web-server": "^4.2.1",
-    "minthril": "^2.0.6",
     "reconnecting-websocket": "^4.4.0",
     "rqlite-fp": "^2.9.0",
-    "watchify": "^3.11.1",
-    "ws": "^7.3.0"
+    "ws": "^7.3.1"
   },
   "devDependencies": {
-    "nodemon": "^2.0.4",
     "brfs": "^2.0.2",
     "browserify": "^16.5.1",
     "envify": "^4.1.0",
     "hyperx": "^2.5.4",
-    "local-web-server": "^4.2.0",
+    "local-web-server": "^4.2.1",
     "minthril": "^2.0.6",
+    "nodemon": "^2.0.4",
     "routemeup": "^1.4.0",
-    "spath": "^1.2.0",
+    "spath": "^2.0.1",
     "uglifyify": "^5.0.2",
     "watchify": "^3.11.1"
   }
