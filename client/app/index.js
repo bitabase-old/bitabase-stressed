@@ -12,7 +12,7 @@ module.exports = function (config) {
   const state = {
   };
 
-  const socket = new WebSocket('ws://localhost:3001', [], {
+  const socket = new WebSocket('ws://' + location.host + ':3001', [], {
     minReconnectionDelay: 500,
     reconnectionDelayGrowFactor: 1
   });
