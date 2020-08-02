@@ -4,7 +4,7 @@ const axios = require('axios');
 const rqlite = require('rqlite-fp');
 const getOne = promisify(rqlite.getOne);
 
-async function createCollection (state, chance) {
+async function createCollection (config, state, chance) {
   const database = await getOne(state.connection, `
     SELECT databases.id as id, 
            databases.name as name,
@@ -29,7 +29,7 @@ async function createCollection (state, chance) {
   };
 
   return axios({
-    url: `http://localhost:8001/v1/databases/${database.name}/collections`,
+    url: `http://${config.remoteServerIp}:8001/v1/databases/${database.name}/collections`,
     method: 'post',
     headers: {
       'x-session-id': database.sessionId,
@@ -43,7 +43,7 @@ async function createCollection (state, chance) {
       message: 'successfully created collection ' + record.id
     };
   }).catch(error => {
-    console.log(error.response.data);
+    console.log(error.response ? error.response.data : error);
     return {
       record,
       error

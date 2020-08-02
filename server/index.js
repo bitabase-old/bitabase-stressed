@@ -7,6 +7,8 @@ const WebSocket = require('ws');
 const Chance = require('chance');
 const finalStream = require('final-stream');
 
+const config = require('./config')
+
 const chance = new Chance();
 
 const createAccount = require('./actions/createAccount');
@@ -76,7 +78,7 @@ const state = {
   }]
 };
 
-rqlite.connect('http://localhost:4001', function (error, connection) {
+rqlite.connect('http://' + config.remoteServerIp + ':4001', function (error, connection) {
   if (error) {
     throw error;
   }
@@ -119,7 +121,7 @@ setInterval(() => {
     const activeRuns = action.runs.length;
 
     for (let i = 0; i < action.runsInBatch - activeRuns; i++) {
-      const promise = action.method(state, chance)
+      const promise = action.method(config, state, chance)
         .then(result => {
           action.runs.splice(action.runs.indexOf(promise), 1);
           const secondGroup = parseInt((Date.now() - startTime) / 1000);

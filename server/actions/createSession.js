@@ -4,7 +4,7 @@ const axios = require('axios');
 const rqlite = require('rqlite-fp');
 const getOne = promisify(rqlite.getOne);
 
-async function createSession (state, chance) {
+async function createSession (config, state, chance) {
   const user = await getOne(state.connection, 'SELECT email FROM users ORDER BY RANDOM() LIMIT 1');
 
   if (!user) {
@@ -19,7 +19,7 @@ async function createSession (state, chance) {
   };
 
   return axios({
-    url: 'http://localhost:8001/v1/sessions',
+    url: 'http://' + config.remoteServerIp + ':8001/v1/sessions',
     method: 'post',
     timeout: 5000,
     data: JSON.stringify(record)

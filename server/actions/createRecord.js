@@ -4,7 +4,7 @@ const axios = require('axios');
 const rqlite = require('rqlite-fp');
 const getOne = promisify(rqlite.getOne);
 
-async function createRecord (state, chance) {
+async function createRecord (config, state, chance) {
   const collection = await getOne(state.connection, `
     SELECT collections.id as id,
            collections.name as name,
@@ -32,7 +32,7 @@ async function createRecord (state, chance) {
   };
 
   return axios({
-    url: `http://localhost:8002/${collection.name}`,
+    url: `http://${config.remoteServerIp}:8002/${collection.name}`,
     headers: {
       host: `${collection.databaseName}.bitabase.test`
     },
